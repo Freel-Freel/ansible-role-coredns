@@ -11,28 +11,49 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+coredns_version: 1.14.3
+coredns_dist: https://github.com/coredns/coredns/releases/download/v{{coredns_version}}/coredns_{{coredns_version}}_linux_amd64.tgz
+
+coredns_dir: /opt/coredns
+coredns_config_dir: /etc/coredns
+coredns_config_dir_zone: "{{ coredns_config_dir }}/zones"
+
+coredns_user: coredns
+coredns_firewalld_service_zone: public
+
+coredns_service_name: "coredns"
+coredns_service_file: "/etc/systemd/system/{{ coredns_service_name }}.service"
+
+coredns_service_log: "/var/log/coredns"
+
+# SERVER defaults:
+coredns_port: 53
+
+# Zone
+coredns_zone_master: ""
+coredns_zone_secondary: 
+  host:
+    domain_name: org
+    master_ip: 1.1.1
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
 Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
+    - hosts: core-dns
+      remote_user: vagrant
+      become: yes
       roles:
-         - { role: username.rolename, x: 42 }
+         - coredns
 
 License
 -------
 
 BSD
 
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).

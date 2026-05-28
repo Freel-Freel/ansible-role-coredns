@@ -15,8 +15,8 @@ User={{ coredns_user }}
 ExecStart={{ coredns_dir }}/coredns -conf={{ coredns_config_dir }}/Corefile
 ExecReload=/bin/kill -SIGUSR1 $MAINPID
 Restart=on-failure
-StandardOutput=append:{{ coredns_service_log }}.log
-StandardError=append:{{ coredns_service_log }}.err.log
+StandardOutput=append:{{ coredns_service_log }}/{{ coredns_service_name }}.log
+StandardError=append:{{ coredns_service_log }}/{{ coredns_service_name }}.err.log
  
  
 [Install]
