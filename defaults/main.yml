@@ -22,7 +22,7 @@ coredns_port: 53
 # Zone
 coredns_zone_master: ""
 coredns_zone_secondary: 
-  botans:
-    domain_name: org
-    master_ip: 89.223.63.213
+  host:
+    domain_name: com
+    master_ip: 1.1.1.1
 
