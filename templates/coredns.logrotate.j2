@@ -1,0 +1,9 @@
+/var/log/coredns/*.log {
+# daily, weekly, monthly, yearly
+    daily
+    missingok
+    rotate 4
+    copytruncate
+    compress
+    minsize 1M
+}

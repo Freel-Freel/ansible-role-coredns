@@ -53,6 +53,16 @@
   notify:
     - reload_service
 
+- name: Configure logrotate for CoreDNS
+  tags: [logrotate]
+  ansible.builtin.template:
+    src: coredns.logrotate.j2
+    dest: /etc/logrotate.d/coredns
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
 - name: netfiler and ip forwarding configuration
   block:
     - name: Add CoreDNS as a service to FirewallD

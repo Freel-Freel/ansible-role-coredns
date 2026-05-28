@@ -4,6 +4,9 @@
 - name: install packages
   tags: [system]
   ansible.builtin.apt:
-    name: ["firewalld"]
+    name: "{{ item }}"
     state: present
     update_cache: yes
+  with_items:
+    - firewalld
+    - logrotate
