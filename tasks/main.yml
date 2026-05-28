@@ -21,6 +21,7 @@
   with_items:
     - "{{ coredns_config_dir }}"
     - "{{ coredns_config_dir_zone }}"
+    - "{{ coredns_service_log }}"
 
 - name: install coredns-go
   tags: [system, install]

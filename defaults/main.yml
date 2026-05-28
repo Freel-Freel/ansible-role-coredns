@@ -14,7 +14,7 @@ coredns_firewalld_service_zone: public
 coredns_service_name: "coredns"
 coredns_service_file: "/etc/systemd/system/{{ coredns_service_name }}.service"
 
-coredns_service_log: "/var/log/coredns/coredns"
+coredns_service_log: "/var/log/coredns"
 
 # SERVER defaults:
 coredns_port: 53

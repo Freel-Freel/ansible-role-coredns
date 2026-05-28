@@ -9,7 +9,7 @@
 
 {% if coredns_zone_secondary is defined %}
   {% for zone_name, zone_config in coredns_zone_secondary.items() %}
-{{ zone_name }}.{{ zone_config.domain_name }} {
+{{ zone_name }}.{{ zone_config.domain_name }}:53 {
     secondary {
         transfer from {{ zone_config.master_ip }}
     }
