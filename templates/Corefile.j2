@@ -1,0 +1,22 @@
+{# templates/Corefile.j2 #}
+{% if coredns_zone_master != "" %}
+.:53 {
+    file /etc/coredns/zones/botans.org {{ coredns_zone_master }}
+    transfer {
+      to *
+    }
+{% endif %}
+
+{% if coredns_zone_secondary is defined %}
+  {% for zone_name, zone_config in coredns_zone_secondary.items() %}
+{{ zone_name }}.{{ zone_config.domain_name }} {
+    secondary {
+        transfer from {{ zone_config.master_ip }}
+    }
+  {% endfor %}
+{% endif %}
+any
+log
+errors
+cache
+}

@@ -1,0 +1,99 @@
+---
+# tasks file for ansible-role-coredns
+
+- name: system setup
+  tags: system
+  include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml"
+
+- name: check directory for binaries
+  ansible.builtin.file:
+    path: "{{ coredns_dir }}"
+    owner: root
+    mode: "0755"
+    state: directory
+
+- name: check config directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    mode: "0755"
+    state: directory
+  with_items:
+    - "{{ coredns_config_dir }}"
+    - "{{ coredns_config_dir_zone }}"
+    - "{{ coredns_service_log }}"
+
+- name: install coredns-go
+  tags: [system, install]
+  ansible.builtin.unarchive:
+    src: "{{ coredns_dist }}"
+    dest: "{{ coredns_dir }}"
+    owner: root
+    group: root
+    remote_src: yes
+    validate_certs: no
+    creates: "{{ coredns_dir }}/coredns"
+
+- name: Add the user
+  ansible.builtin.user:
+    name: "{{ coredns_user }}"
+    comment: coredns server user
+    shell: "/usr/bin/false"
+    password: "!"
+
+- name: render coredns config
+  tags: [config]
+  ansible.builtin.template:
+    src: Corefile.j2
+    dest: "{{ coredns_config_dir }}/Corefile"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify:
+    - reload_service
+
+- name: netfiler and ip forwarding configuration
+  block:
+    - name: Add CoreDNS as a service to FirewallD
+      template:
+        src: firewalld.xml.j2
+        dest: /etc/firewalld/services/coredns.xml
+        owner: root
+        group: root
+        mode: 0644
+      register: firewalld_service
+
+    - name: Reload firewalld to add/update wireguard service
+      ansible.builtin.command: "firewall-cmd --reload"
+      when: firewalld_service.changed
+
+    - name: Allow CoreDNS service for FirewallD zone
+      firewalld:
+        zone: "{{ coredns_firewalld_service_zone }}"
+        service: coredns
+        state: enabled
+        permanent: yes
+        immediate: yes
+
+
+- name: setup service
+  tags: [service]
+  block:
+    - name: render service file
+      ansible.builtin.template:
+        src: "{{ coredns_service_name }}.service.j2"
+        dest: "{{ coredns_service_file }}"
+        owner: root
+        group: root
+        mode: 0600
+        force: yes
+      notify:
+        - reload_systemd
+        - reload_service
+
+    - name: enable service
+      systemd:
+        name: "{{ coredns_service_name }}"
+        enabled: yes
+        state: started

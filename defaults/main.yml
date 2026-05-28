@@ -1,0 +1,28 @@
+---
+# defaults file for ansible-role-coredns
+
+coredns_version: 1.14.3
+coredns_dist: https://github.com/coredns/coredns/releases/download/v{{coredns_version}}/coredns_{{coredns_version}}_linux_amd64.tgz
+
+coredns_dir: /opt/coredns
+coredns_config_dir: /etc/coredns
+coredns_config_dir_zone: "{{ coredns_config_dir }}/zones"
+
+coredns_user: coredns
+coredns_firewalld_service_zone: public
+
+coredns_service_name: "coredns"
+coredns_service_file: "/etc/systemd/system/{{ coredns_service_name }}.service"
+
+coredns_service_log: "/var/log/coredns/coredns"
+
+# SERVER defaults:
+coredns_port: 53
+
+# Zone
+coredns_zone_master: ""
+coredns_zone_secondary: 
+  botans:
+    domain_name: org
+    master_ip: 89.223.63.213
+
