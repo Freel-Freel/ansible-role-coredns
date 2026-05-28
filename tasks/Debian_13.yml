@@ -1,6 +1,9 @@
 ---
 # setup tasks for Debian 13
 
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
 - name: install packages
   tags: [system]
   ansible.builtin.apt:
@@ -9,4 +12,16 @@
     update_cache: yes
   with_items:
     - logrotate
-    - firewalld
+
+- name: check config directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    mode: "0755"
+    state: directory
+  with_items:
+    - "/etc/systemd/system/systemd-resolved.service.d/"
+  notify:
+    - reload_service
+    - reload_systemd-resolved
+  when:  ansible_facts['services']['systemd-resolved.service']['status'] | default('not-found') != 'not-found'

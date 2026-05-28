@@ -64,6 +64,7 @@
     force: yes
 
 - name: netfiler and ip forwarding configuration
+  tags: [firewalld]
   block:
     - name: Add CoreDNS as a service to FirewallD
       template:
