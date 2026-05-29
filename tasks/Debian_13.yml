@@ -12,6 +12,7 @@
     update_cache: yes
   with_items:
     - logrotate
+    - firewalld
 
 - name: check config directory
   ansible.builtin.file:
